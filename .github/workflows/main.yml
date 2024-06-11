@@ -27,7 +27,9 @@ jobs:
     needs: [CI]
     uses: fsv-aula/primeira-pipeline-cicd/.github/workflows/deploy.yaml@main
     with:
-      manifests: k8s/deployment.yaml
-      images: fabricioveronez/aula-primeira-pipeline:v${{ github.run_number }} 
+      manifests: | 
+        k8s/deployment.yaml
+      images: | 
+        fabricioveronez/aula-primeira-pipeline:v${{ github.run_number }} 
     secrets: inherit
 
