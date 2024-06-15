@@ -1,7 +1,6 @@
 name: CI-CD
 on: 
   push:
-    branches: ["main"]
   workflow_dispatch:
 jobs:
   CI:
@@ -23,21 +22,32 @@ jobs:
         tags: | 
           fabricioveronez/aula-primeira-pipeline:v${{ github.run_number }} 
           fabricioveronez/aula-primeira-pipeline:latest 
-  CD:
-    runs-on: ubuntu-latest
+  CD-Homolog:
     needs: [CI]
-    steps: 
-    - name: Obtendo o código
-      uses: actions/checkout@v4.1.5
-    - name: Configuração de contexto do Kubernetes
-      uses: azure/k8s-set-context@v4.0.0
-      with:
-        method: kubeconfig
-        kubeconfig: ${{ secrets.K8S_CONFIG }}
-    - name: Execução do Manifesto
-      uses: Azure/k8s-deploy@v5
-      with:
-        manifests: |
-          ./k8s/deployment.yaml
-        images: |
-          fabricioveronez/aula-primeira-pipeline:v${{ github.run_number }}
+    uses: fsv-aula/primeira-pipeline-cicd/.github/workflows/deploy.yaml@main
+    with:
+      manifests: | 
+        k8s/deployment.yaml
+      images: | 
+        fabricioveronez/aula-primeira-pipeline:v${{ github.run_number }} 
+      environment: homologacao
+    secrets: inherit
+
+  Teste-Ambiente:
+    needs: [CD-Homolog]
+    runs-on: ubuntu-latest
+    environment: homologacao
+    steps:
+      - name: Fake Teste
+        run: echo "Fake teste de ambiente ${{ vars.APP_NAMESPACE }}"
+
+  CD-Producao:
+    needs: [Teste-Ambiente]
+    uses: fsv-aula/primeira-pipeline-cicd/.github/workflows/deploy.yaml@main
+    with:
+      manifests: | 
+        k8s/deployment.yaml
+      images: | 
+        fabricioveronez/aula-primeira-pipeline:v${{ github.run_number }} 
+      environment: producao
+    secrets: inherit
