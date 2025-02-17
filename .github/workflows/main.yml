@@ -40,4 +40,4 @@ jobs:
         manifests: |
           ./k8s/deployment.yaml
         images: |
-          fabricioveronez/aula-primeira-pipeline:v${{ github.run_number }}
+          marlonbastida/aula-primeira-pipeline:v${{ github.run_number }}
