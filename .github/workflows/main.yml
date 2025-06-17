@@ -21,23 +21,12 @@ jobs:
         file: ./src/Dockerfile
         push: true
         tags: | 
-          fabricioveronez/aula-primeira-pipeline:v${{ github.run_number }} 
-          fabricioveronez/aula-primeira-pipeline:latest 
+          LucasHsCarmo/primeira-pipeline-cicd:v${{ github.run_number }}
+          LucasHsCarmo/primeira-pipeline-cicd:latest
   CD:
-    runs-on: ubuntu-latest
     needs: [CI]
-    steps: 
-    - name: Obtendo o código
-      uses: actions/checkout@v4.1.5
-    - name: Configuração de contexto do Kubernetes
-      uses: azure/k8s-set-context@v4.0.0
-      with:
-        method: kubeconfig
-        kubeconfig: ${{ secrets.K8S_CONFIG }}
-    - name: Execução do Manifesto
-      uses: Azure/k8s-deploy@v5
-      with:
-        manifests: |
-          ./k8s/deployment.yaml
-        images: |
-          fabricioveronez/aula-primeira-pipeline:v${{ github.run_number }}
+    uses: LucasHsCarmo/primeira-pipeline-cicd/.github/workflows/deploy.yml@main
+    with:
+      manifests: k8s/deployment.yaml
+      images: LucasHsCarmo/primeira-pipeline-cicd:v${{ github.run_number }}
+    secrets: inherit
