@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: web
-        image: fabricioveronez/primeira-pipeline-cicd
+        image: iadocicco/aula-primeira-pipeline
         ports:
         - containerPort: 5000
 --- 
@@ -27,4 +27,4 @@ spec:
   ports:
   - port: 80
     targetPort: 5000
-  type: LoadBalancer
+  type: NodePort
