@@ -24,7 +24,7 @@ jobs:
           leosimao88/aula-primeira-pipeline:v${{ github.run_number }}
           leosimao88/aula-primeira-pipeline:latest
   CD:
-    runs-on: ubutu-latest 
+    runs-on: ubuntu-latest 
     needs: [CI]
     steps:
     - name: Obtendo o código
