@@ -1,4 +1,4 @@
-name: CI-CD
+name: CI
 on: 
   push:
     branches: ["main"]
@@ -23,3 +23,21 @@ jobs:
         tags: |
           leosimao88/aula-primeira-pipeline:v${{ github.run_number }}
           leosimao88/aula-primeira-pipeline:latest
+  CD:
+    runs-on: ubutu-latest 
+    needs: [CI]
+    steps:
+    - name: Obtendo o código
+      uses: actions/checkout@v6
+    - name: Configuração de contexto do Kubernetes
+      uses: azure/k8s-set-context@v4
+      with:
+        method: kubeconfig
+        kubeconfig: ${{ secrets.K8S_CONFIG }}
+    - name: Execução do Manifesto
+      uses: Azure/k8s-deploy@v5
+      with:
+        manifests: |
+          ./k8s/deployment.yaml
+        images: |
+          leosimao88/aula-primeira-pipeline:v${{ github.run_number }}
